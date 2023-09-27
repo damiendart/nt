@@ -1,0 +1,62 @@
+# Copyright (C) Damien Dart, <damiendart@pobox.com>.
+# This file is distributed under the MIT licence. For more information,
+# please refer to the accompanying "LICENCE" file.
+---
+
+version: '3'
+
+output: 'prefixed'
+
+vars:
+  GO_PACKAGES:
+    sh: 'go list ./...'
+
+tasks:
+  default:
+    deps:
+      - task: 'ci'
+
+  ci:
+    cmds:
+      - task: 'clean'
+      - task: 'lint'
+      - task: 'test'
+      - task: 'build'
+    desc: 'Run all continuous-integration-related tasks'
+
+  clean:
+    cmds:
+      - 'rm -fr snippet-placeholder'
+    desc: 'Delete all buildable files'
+
+  build:
+    cmds:
+      - 'go build ./cmd/nt'
+    desc: 'Build the "nt" application'
+
+  lint:
+    cmds:
+      - task: 'lint:golint'
+      - task: 'lint:staticcheck'
+      - task: 'lint:vet'
+    desc: 'Run all linting tasks'
+
+  lint:golint:
+    cmds:
+      - 'golint -set_exit_status {{catLines .GO_PACKAGES}}'
+    desc: 'Lint Go files with Golint'
+
+  lint:staticcheck:
+    cmds:
+      - 'staticcheck {{catLines .GO_PACKAGES}}'
+    desc: 'Lint Go files with Staticcheck'
+
+  lint:vet:
+    cmds:
+      - 'go vet {{catLines .GO_PACKAGES}}'
+    desc: 'Lint Go files with Vet'
+
+  test:
+    cmds:
+      - 'go test -v {{catLines .GO_PACKAGES}}'
+    desc: 'Run all tests'
