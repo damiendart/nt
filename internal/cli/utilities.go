@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 )
 
+// OpenFileInVim opens a file in Vim.
 func OpenFileInVim(w io.Writer, dir string, filename string) error {
 	file := filepath.Join(dir, filename)
 

@@ -11,8 +11,11 @@ import (
 	"github.com/damiendart/nt/internal/cli"
 )
 
+// Jot is a nt command that appends a timestamped Markdown list item to
+// the top-level inbox note.
 type Jot struct{}
 
+// Run will execute the Jot command.
 func (cmd Jot) Run(app cli.Application, normalisedArgs []string) error {
 	var text string
 
