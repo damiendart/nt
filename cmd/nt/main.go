@@ -20,9 +20,10 @@ func normaliseArgs(args []string) []string {
 
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "--") {
-			for _, s := range strings.Split(arg, "=") {
-				normalisedArgs = append(normalisedArgs, s)
-			}
+			normalisedArgs = append(
+				normalisedArgs,
+				strings.Split(arg, "=")...,
+			)
 		} else if strings.HasPrefix(arg, "-") {
 			for i, r := range arg[1:] {
 				if r == '=' {
@@ -48,7 +49,7 @@ func main() {
 
 	cmdMap := map[string]cli.Command{
 		"inbox": &commands.Inbox{},
-		"jot":   commands.Jot{},
+		"jot":   &commands.Jot{},
 	}
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
 	normalisedArgs := normaliseArgs(os.Args[1:])
