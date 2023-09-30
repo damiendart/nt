@@ -50,6 +50,7 @@ func main() {
 	cmdMap := map[string]cli.Command{
 		"inbox": &commands.Inbox{},
 		"jot":   &commands.Jot{},
+		"tags":  &commands.Tags{},
 	}
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
 	normalisedArgs := normaliseArgs(os.Args[1:])
