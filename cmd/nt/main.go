@@ -50,6 +50,7 @@ func main() {
 	cmdMap := map[string]cli.Command{
 		"inbox": &commands.Inbox{},
 		"jot":   &commands.Jot{},
+		"new":   &commands.New{},
 		"tags":  &commands.Tags{},
 	}
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
