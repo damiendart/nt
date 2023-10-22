@@ -91,16 +91,16 @@ func main() {
 
 	normalisedArgs = normalisedArgs[:argsEnd]
 
+	if len(normalisedArgs) == 0 {
+		logger.Fatalf("missing command")
+	}
+
 	if currentOption != "" {
 		logger.Fatalf("missing value for %q option", currentOption)
 	}
 
 	if strings.HasPrefix(normalisedArgs[0], "-") {
 		logger.Fatalf("invalid option: \"" + normalisedArgs[0] + "\"")
-	}
-
-	if len(normalisedArgs) == 0 {
-		logger.Fatalf("missing command")
 	}
 
 	if notesDir == "" {
