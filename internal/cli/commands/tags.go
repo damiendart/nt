@@ -40,7 +40,7 @@ func (cmd *Tags) Run(app cli.Application, normalisedArgs []string) error {
 				return err
 			}
 
-			tagRegex, e := regexp.Compile("[ ']#([a-zA-Z/:-]+)")
+			tagRegex, e := regexp.Compile("[ '(]#([a-zA-Z/:-]+)")
 			if e != nil {
 				return err
 			}
