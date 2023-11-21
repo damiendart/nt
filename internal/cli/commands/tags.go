@@ -6,11 +6,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/damiendart/nt/internal/cli"
+	"github.com/damiendart/nt/internal/tags"
 )
 
 // Tags is a nt command that lists all tags used across all notes.
@@ -31,17 +31,12 @@ func (cmd *Tags) Run(app cli.Application, normalisedArgs []string) error {
 		}
 	}
 
-	tags := make(map[string]int)
+	tagsCount := make(map[string]int)
 
 	err := filepath.WalkDir(
 		app.NotesDir,
 		func(s string, d fs.DirEntry, err error) error {
 			if err != nil {
-				return err
-			}
-
-			tagRegex, e := regexp.Compile("[ '(]#([a-zA-Z/:-]+)")
-			if e != nil {
 				return err
 			}
 
@@ -54,9 +49,9 @@ func (cmd *Tags) Run(app cli.Application, normalisedArgs []string) error {
 
 				scanner := bufio.NewScanner(f)
 				for scanner.Scan() {
-					matches := tagRegex.FindAllStringSubmatch(scanner.Text(), -1)
-					for _, m := range matches {
-						tags[m[1]]++
+					matches := tags.ExtractTags(scanner.Text())
+					for _, t := range matches {
+						tagsCount[t]++
 					}
 				}
 
@@ -72,8 +67,8 @@ func (cmd *Tags) Run(app cli.Application, normalisedArgs []string) error {
 		return err
 	}
 
-	ts := make([]string, 0, len(tags))
-	for k, v := range tags {
+	ts := make([]string, 0, len(tagsCount))
+	for k, v := range tagsCount {
 		if showCount {
 			ts = append(ts, fmt.Sprintf("%s (%d)", k, v))
 		} else {
