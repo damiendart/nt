@@ -1,19 +1,20 @@
-package commands
+package main
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/damiendart/nt/internal/cli"
+	"github.com/damiendart/nt/internal/editor"
 )
 
-// New is a nt command that opens a new or existing note in Vim.
-type New struct{}
+// NewCommand is a nt command that opens a new or existing note in Vim.
+type NewCommand struct{}
 
-// Run will execute the New command.
-func (cmd *New) Run(app cli.Application, normalisedArgs []string) error {
+// Run will execute the NewCommand command.
+func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
 	var argsEnd int
 	var zettel bool
 
@@ -51,5 +52,14 @@ func (cmd *New) Run(app cli.Application, normalisedArgs []string) error {
 		)
 	}
 
-	return cli.OpenFileInVim(app.Output, app.NotesDir, file)
+	if !strings.HasPrefix(file, app.NotesDir) {
+		return fmt.Errorf("note would be created outside of %q", app.NotesDir)
+	}
+
+	err := os.MkdirAll(filepath.Dir(file), 0700)
+	if err != nil {
+		return err
+	}
+
+	return editor.OpenFileInVim(app.Output, app.NotesDir, file)
 }

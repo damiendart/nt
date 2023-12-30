@@ -1,4 +1,4 @@
-package commands
+package main
 
 import (
 	"bufio"
@@ -9,15 +9,14 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/damiendart/nt/internal/cli"
 	"github.com/damiendart/nt/internal/tags"
 )
 
-// Tags is a nt command that lists all tags used across all notes.
-type Tags struct{}
+// TagsCommand is a nt command to list all tags used across all notes.
+type TagsCommand struct{}
 
-// Run will execute the Tags command.
-func (cmd *Tags) Run(app cli.Application, normalisedArgs []string) error {
+// Run will execute the TagsCommand command.
+func (cmd *TagsCommand) Run(app Application, normalisedArgs []string) error {
 	var showCount bool
 
 	for _, arg := range normalisedArgs {

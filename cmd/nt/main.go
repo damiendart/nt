@@ -2,16 +2,28 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/damiendart/nt/internal/cli"
-	"github.com/damiendart/nt/internal/cli/commands"
 )
 
-func help(cmdMap map[string]cli.Command) string {
+// An Application is used to store any application-wide dependencies.
+type Application struct {
+	Commands map[string]Command
+	Logger   *log.Logger
+	NotesDir string
+	Output   io.Writer
+}
+
+// Command is implemented by anything that has a Run method. The
+// implementation can then be used as nt command.
+type Command interface {
+	Run(app Application, normalisedArgs []string) error
+}
+
+func help(cmdMap map[string]Command) string {
 	return `HELP TEXT GOES HERE`
 }
 
@@ -47,11 +59,11 @@ func main() {
 	var currentOption string
 	var notesDir string
 
-	cmdMap := map[string]cli.Command{
-		"inbox": &commands.Inbox{},
-		"jot":   &commands.Jot{},
-		"new":   &commands.New{},
-		"tags":  &commands.Tags{},
+	cmdMap := map[string]Command{
+		"inbox": &InboxCommand{},
+		"jot":   &JotCommand{},
+		"new":   &NewCommand{},
+		"tags":  &TagsCommand{},
 	}
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
 	normalisedArgs := normaliseArgs(os.Args[1:])
@@ -111,7 +123,7 @@ func main() {
 		}
 	}
 
-	application := &cli.Application{
+	application := &Application{
 		Commands: cmdMap,
 		Logger:   logger,
 		NotesDir: notesDir,
