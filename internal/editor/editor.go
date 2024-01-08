@@ -5,13 +5,10 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path/filepath"
 )
 
 // OpenFileInVim opens a file in Vim.
-func OpenFileInVim(w io.Writer, cwd string, filename string) error {
-	file := filepath.Join(cwd, filename)
-
+func OpenFileInVim(w io.Writer, file string) error {
 	if _, ok := os.LookupEnv("VIM_TERMINAL"); ok {
 		_, err := fmt.Fprintf(
 			w,
@@ -24,7 +21,6 @@ func OpenFileInVim(w io.Writer, cwd string, filename string) error {
 	}
 
 	cmd := exec.Command("vim", file)
-	cmd.Dir = cwd
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

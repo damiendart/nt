@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/damiendart/nt/internal/editor"
@@ -18,5 +19,10 @@ func (cmd *InboxCommand) Run(app Application, normalisedArgs []string) error {
 		}
 	}
 
-	return editor.OpenFileInVim(app.Output, app.NotesDir, "inbox.md")
+	err := os.Chdir(app.NotesDir)
+	if err != nil {
+		return err
+	}
+
+	return editor.OpenFileInVim(app.Output, "inbox.md")
 }

@@ -52,6 +52,9 @@ func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
 		)
 	}
 
+	file = filepath.Join(app.NotesDir, file)
+	file = filepath.Clean(file)
+
 	if !strings.HasPrefix(file, app.NotesDir) {
 		return fmt.Errorf("note would be created outside of %q", app.NotesDir)
 	}
@@ -61,5 +64,10 @@ func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
 		return err
 	}
 
-	return editor.OpenFileInVim(app.Output, app.NotesDir, file)
+	err = os.Chdir(app.NotesDir)
+	if err != nil {
+		return err
+	}
+
+	return editor.OpenFileInVim(app.Output, file)
 }
