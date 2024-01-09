@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -30,5 +31,16 @@ func (editor VimEditor) OpenFile(w io.Writer, file string) error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		var exitError *exec.ExitError
+
+		if errors.As(err, &exitError) {
+			return fmt.Errorf("vim exited with exit status %d", exitError.ExitCode())
+		}
+
+		return err
+	}
+
+	return nil
 }
