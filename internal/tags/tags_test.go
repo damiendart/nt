@@ -7,6 +7,8 @@ import (
 )
 
 func TestExtractTags(t *testing.T) {
+	t.Parallel()
+
 	var testCases = []struct {
 		input    string
 		expected []string
@@ -33,9 +35,13 @@ func TestExtractTags(t *testing.T) {
 	}
 
 	for _, tt := range testCases {
+		tt := tt
+
 		t.Run(
 			fmt.Sprintf("extracts tags from %q correctly", tt.input),
 			func(t *testing.T) {
+				t.Parallel()
+
 				output := ExtractTags(tt.input)
 
 				if reflect.DeepEqual(output, tt.expected) == false {
@@ -44,5 +50,4 @@ func TestExtractTags(t *testing.T) {
 			},
 		)
 	}
-
 }
