@@ -7,11 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/damiendart/nt/internal/editor"
 )
 
 // An Application is used to store any application-wide dependencies.
 type Application struct {
 	Commands map[string]Command
+	Editor   editor.Editor
 	Logger   *log.Logger
 	NotesDir string
 	Output   io.Writer
@@ -125,6 +128,7 @@ func main() {
 
 	application := &Application{
 		Commands: cmdMap,
+		Editor:   &editor.VimEditor{},
 		Logger:   logger,
 		NotesDir: notesDir,
 		Output:   os.Stdout,

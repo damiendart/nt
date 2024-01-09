@@ -6,11 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/damiendart/nt/internal/editor"
 )
 
-// NewCommand is a nt command that opens a new or existing note in Vim.
+// NewCommand is a nt command to open and create notes in a text editor.
 type NewCommand struct{}
 
 // Run will execute the NewCommand command.
@@ -69,5 +67,5 @@ func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
 		return err
 	}
 
-	return editor.OpenFileInVim(app.Output, file)
+	return app.Editor.OpenFile(app.Output, file)
 }

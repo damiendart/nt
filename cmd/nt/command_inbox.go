@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/damiendart/nt/internal/editor"
 )
 
-// InboxCommand is a nt command to open the top-level inbox note in Vim.
+// InboxCommand is a nt command to open the top-level inbox note in a
+// text editor.
 type InboxCommand struct{}
 
 // Run will execute the InboxCommand command.
@@ -24,5 +23,5 @@ func (cmd *InboxCommand) Run(app Application, normalisedArgs []string) error {
 		return err
 	}
 
-	return editor.OpenFileInVim(app.Output, "inbox.md")
+	return app.Editor.OpenFile(app.Output, "inbox.md")
 }
