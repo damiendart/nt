@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"strings"
+
+	"github.com/damiendart/nt/internal/cli"
 )
 
 // InboxCommand is a nt command to open the top-level inbox note in a
@@ -11,14 +11,13 @@ import (
 type InboxCommand struct{}
 
 // Run will execute the InboxCommand command.
-func (cmd *InboxCommand) Run(app Application, normalisedArgs []string) error {
-	for _, arg := range normalisedArgs {
-		if strings.HasPrefix(arg, "-") {
-			return fmt.Errorf("invalid option: \"" + arg + "\"")
-		}
+func (cmd *InboxCommand) Run(app Application, args []string) error {
+	_, _, err := cli.ParseArgs(args, cli.Spec{})
+	if err != nil {
+		return err
 	}
 
-	err := os.Chdir(app.NotesDir)
+	err = os.Chdir(app.NotesDir)
 	if err != nil {
 		return err
 	}

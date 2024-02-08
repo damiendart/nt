@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/damiendart/nt/internal/cli"
 )
 
 // JotCommand is a nt command that appends a timestamped Markdown list
@@ -14,17 +16,16 @@ import (
 type JotCommand struct{}
 
 // Run will execute the JotCommand command.
-func (cmd JotCommand) Run(app Application, normalisedArgs []string) error {
+func (cmd JotCommand) Run(app Application, args []string) error {
 	var text string
 
-	for _, arg := range normalisedArgs {
-		if strings.HasPrefix(arg, "-") {
-			return fmt.Errorf("invalid option: \"" + arg + "\"")
-		}
+	_, _, err := cli.ParseArgs(args, cli.Spec{})
+	if err != nil {
+		return err
 	}
 
-	if len(normalisedArgs) > 0 {
-		text = strings.Join(normalisedArgs, " ")
+	if len(args) > 0 {
+		text = strings.Join(args, " ")
 
 		defer func() {
 			fmt.Fprintln(app.Output, text)

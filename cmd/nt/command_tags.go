@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/damiendart/nt/internal/cli"
 	"github.com/damiendart/nt/internal/tags"
 )
 
@@ -16,23 +17,24 @@ import (
 type TagsCommand struct{}
 
 // Run will execute the TagsCommand command.
-func (cmd *TagsCommand) Run(app Application, normalisedArgs []string) error {
+func (cmd *TagsCommand) Run(app Application, args []string) error {
 	var showCount bool
 
-	for _, arg := range normalisedArgs {
-		if arg == "-c" {
-			showCount = true
-			break
-		}
+	opts, _, err := cli.ParseArgs(args, cli.Spec{"c": cli.NoValueAccepted})
+	if err != nil {
+		return err
+	}
 
-		if strings.HasPrefix(arg, "-") {
-			return fmt.Errorf("tags: invalid option: %q", arg)
+	for k := range opts {
+		switch {
+		case k == "c":
+			showCount = true
 		}
 	}
 
 	tagsCount := make(map[string]int)
 
-	err := filepath.WalkDir(
+	err = filepath.WalkDir(
 		app.NotesDir,
 		func(s string, d fs.DirEntry, err error) error {
 			if err != nil {

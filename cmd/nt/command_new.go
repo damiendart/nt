@@ -6,34 +6,34 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/damiendart/nt/internal/cli"
 )
 
 // NewCommand is a nt command to open and create notes in a text editor.
 type NewCommand struct{}
 
 // Run will execute the NewCommand command.
-func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
-	var argsEnd int
+func (cmd *NewCommand) Run(app Application, args []string) error {
 	var zettel bool
 
-	for _, arg := range normalisedArgs {
-		switch {
-		case arg == "-z", arg == "--zettel":
-			zettel = true
+	opts, remainingArgs, err := cli.ParseArgs(args, cli.Spec{"z": cli.NoValueAccepted})
+	if err != nil {
+		return err
+	}
 
-		default:
-			normalisedArgs[argsEnd] = arg
-			argsEnd++
+	for k := range opts {
+		switch {
+		case k == "z":
+			zettel = true
 		}
 	}
 
-	normalisedArgs = normalisedArgs[:argsEnd]
-
-	if len(normalisedArgs) == 0 {
+	if len(remainingArgs) == 0 {
 		return fmt.Errorf("new: missing filename")
 	}
 
-	file := normalisedArgs[0]
+	file := remainingArgs[0]
 
 	if !strings.HasSuffix(file, ".md") {
 		file = file + ".md"
@@ -57,7 +57,7 @@ func (cmd *NewCommand) Run(app Application, normalisedArgs []string) error {
 		return fmt.Errorf("note would be created outside of %q", app.NotesDir)
 	}
 
-	err := os.MkdirAll(filepath.Dir(file), 0700)
+	err = os.MkdirAll(filepath.Dir(file), 0700)
 	if err != nil {
 		return err
 	}
