@@ -15,15 +15,25 @@ type NewCommand struct{}
 
 // Run will execute the NewCommand command.
 func (cmd *NewCommand) Run(app Application, args []string) error {
+	var createDirs bool
 	var zettel bool
 
-	opts, remainingArgs, err := cli.ParseArgs(args, cli.Spec{"z": cli.NoValueAccepted})
+	opts, remainingArgs, err := cli.ParseArgs(
+		args,
+		cli.Spec{
+			"create-dirs": cli.NoValueAccepted,
+			"d":           cli.NoValueAccepted,
+			"z":           cli.NoValueAccepted,
+		},
+	)
 	if err != nil {
 		return err
 	}
 
 	for k := range opts {
 		switch {
+		case k == "create-dirs", k == "d":
+			createDirs = true
 		case k == "z":
 			zettel = true
 		}
@@ -57,9 +67,11 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 		return fmt.Errorf("note would be created outside of %q", app.NotesDir)
 	}
 
-	err = os.MkdirAll(filepath.Dir(file), 0700)
-	if err != nil {
-		return err
+	if createDirs {
+		err := os.MkdirAll(filepath.Dir(file), 0700)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = os.Chdir(app.NotesDir)
