@@ -41,8 +41,6 @@ func TestParseArgsWithInvalidInput(t *testing.T) {
 	}
 
 	for _, tt := range testCases {
-		tt := tt
-
 		t.Run(
 			fmt.Sprintf("handles %q correctly", tt.input),
 			func(t *testing.T) {
@@ -108,8 +106,6 @@ func TestParseArgsWithValidInputs(t *testing.T) {
 	}
 
 	for _, tt := range testCases {
-		tt := tt
-
 		t.Run(
 			fmt.Sprintf("parses options from %q correctly", tt.input),
 			func(t *testing.T) {

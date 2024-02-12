@@ -39,8 +39,6 @@ func TestExtractTags(t *testing.T) {
 	}
 
 	for _, tt := range testCases {
-		tt := tt
-
 		t.Run(
 			fmt.Sprintf("extracts tags from %q correctly", tt.input),
 			func(t *testing.T) {
