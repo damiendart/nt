@@ -27,7 +27,8 @@ tasks:
   clean:
     cmds:
       - 'rm -fr nt'
-    desc: 'Delete all buildable files'
+      - 'go clean -testcache'
+    desc: 'Delete all buildable files and caches'
 
   build:
     cmds:
