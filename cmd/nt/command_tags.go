@@ -54,7 +54,7 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 
 				scanner := bufio.NewScanner(f)
 				for scanner.Scan() {
-					matches := tags.ExtractTags(scanner.Text())
+					matches := tags.ExtractHashtags(scanner.Text())
 					for _, t := range matches {
 						tagsCount[t]++
 					}

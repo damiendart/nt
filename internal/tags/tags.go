@@ -4,24 +4,57 @@
 
 package tags
 
-import "regexp"
+import (
+	"strings"
+	"unicode"
+)
 
-// If updating the following regular expression, the regular expressions
-// in <https://github.com/damiendart/toolbox> to add tag syntax
-// highlighting in Vim may also require updating.
-var hashtagRegex = regexp.MustCompile("(?:^|[ \"'(])#([0-9/:-]*[a-zA-Z][a-zA-Z0-9/:-]*)")
-
-// ExtractTags returns all tags in the provided string. Currently only
-// hashtags are supported. Hashtags are phrases that start with a hash
-// symbol and contain alphanumeric, "/", ":", and "-" characters.
-// Hashtags must contain at least one letter.
-func ExtractTags(s string) []string {
+// ExtractHashtags returns all hashtags in the provided string. Hashtags
+// are words that start with a hash symbol and contain alphanumeric,
+// "/", ":", and "-" characters. Hashtags must contain at least one
+// letter, and any valid trailing punctuation characters are omitted.
+// Hashtags can be surrounded with quotation marks and parentheses.
+func ExtractHashtags(s string) []string {
 	var matches []string
 
-	tagMatches := hashtagRegex.FindAllStringSubmatch(s, -1)
-	for _, m := range tagMatches {
-		matches = append(matches, m[1])
+	for _, t := range strings.Fields(s) {
+		t = strings.Trim(t, "\"'()")
+
+		if len(t) == 1 {
+			continue
+		}
+
+		if !strings.HasPrefix(t, "#") {
+			continue
+		}
+
+		if isValidHashtagName(t[1:]) {
+			matches = append(matches, strings.Trim(t[1:], "/:-"))
+		}
 	}
 
 	return matches
+}
+
+func isValidHashtagName(s string) bool {
+	hasLetter := false
+
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			hasLetter = true
+			continue
+		}
+
+		if unicode.IsNumber(r) {
+			continue
+		}
+
+		if r == '/' || r == ':' || r == '-' {
+			continue
+		}
+
+		return false
+	}
+
+	return hasLetter
 }
