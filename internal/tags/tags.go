@@ -9,11 +9,13 @@ import (
 	"unicode"
 )
 
-// ExtractHashtags returns all hashtags in the provided string. Hashtags
-// are words that start with a hash symbol and contain alphanumeric,
-// "/", ":", and "-" characters. Hashtags must contain at least one
-// letter, and any valid trailing punctuation characters are omitted.
-// Hashtags can be surrounded with quotation marks and parentheses.
+// ExtractHashtags returns all hashtags (without starting hash symbols)
+// in the provided string.
+//
+// Hashtags are words that start with a hash symbol, followed by
+// alphanumeric, "/", ":", and "-" characters. Hashtags must contain at
+// least one letter and any trailing colons are ignored. They can be
+// surrounded with quotation marks and parentheses.
 func ExtractHashtags(s string) []string {
 	var matches []string
 
@@ -29,7 +31,7 @@ func ExtractHashtags(s string) []string {
 		}
 
 		if isValidHashtagName(t[1:]) {
-			matches = append(matches, strings.Trim(t[1:], "/:-"))
+			matches = append(matches, strings.TrimRight(t[1:], ":"))
 		}
 	}
 
