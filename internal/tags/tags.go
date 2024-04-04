@@ -13,9 +13,9 @@ import (
 // in the provided string.
 //
 // Hashtags are words that start with a hash symbol, followed by
-// alphanumeric, "/", ":", and "-" characters. Hashtags must contain at
-// least one letter and any trailing colons are ignored. They can be
-// surrounded with quotation marks and parentheses.
+// alphanumeric, "/", ":", "-", and "_" characters. Hashtags must
+// contain at least one letter and any trailing colons are ignored. They
+// can be surrounded with quotation marks and parentheses.
 func ExtractHashtags(s string) []string {
 	var matches []string
 
@@ -51,7 +51,7 @@ func isValidHashtagName(s string) bool {
 			continue
 		}
 
-		if r == '/' || r == ':' || r == '-' {
+		if r == '/' || r == ':' || r == '-' || r == '_' {
 			continue
 		}
 
