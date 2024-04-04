@@ -2,6 +2,10 @@
 // This file is distributed under the MIT licence. For more information,
 // please refer to the accompanying "LICENCE" file.
 
+// Note: If anything here gets updated, the hashtag-related
+// bits-and-pieces in my Vim configuration files (available at
+// <https://github.com/damiendart/toolbox>) may also need updating.
+
 package tags
 
 import (
