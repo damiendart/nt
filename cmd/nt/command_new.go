@@ -78,10 +78,5 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 		}
 	}
 
-	err = os.Chdir(app.NotesDir)
-	if err != nil {
-		return err
-	}
-
-	return app.Editor.OpenFile(app.Output, file)
+	return app.Editor.OpenFile(file, app.Output, app.NotesDir)
 }

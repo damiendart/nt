@@ -18,19 +18,27 @@ type VimEditor struct{}
 // OpenFile opens a file in Vim. If in a Vim terminal, Vim's terminal
 // JSON API will be used to open the file in the current instance of
 // Vim (for more information, see "terminal-api" in Vim's help files).
-func (editor VimEditor) OpenFile(w io.Writer, file string) error {
+func (editor VimEditor) OpenFile(path string, w io.Writer, root string) error {
 	if _, ok := os.LookupEnv("VIM_TERMINAL"); ok {
 		_, err := fmt.Fprintf(
 			w,
 			"\033]51;[%q, %q]\007",
 			"drop",
-			file,
+			path,
 		)
 
 		return err
 	}
 
-	cmd := exec.Command("vim", file)
+	if root != "" {
+		err := os.Chdir(root)
+		if err != nil {
+			return err
+		}
+	}
+
+	cmd := exec.Command("vim", path)
+	cmd.Env = os.Environ()
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

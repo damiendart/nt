@@ -5,7 +5,7 @@
 package main
 
 import (
-	"os"
+	"path/filepath"
 
 	"github.com/damiendart/nt/internal/cli"
 )
@@ -21,10 +21,9 @@ func (cmd *InboxCommand) Run(app Application, args []string) error {
 		return err
 	}
 
-	err = os.Chdir(app.NotesDir)
-	if err != nil {
-		return err
-	}
-
-	return app.Editor.OpenFile(app.Output, "inbox.md")
+	return app.Editor.OpenFile(
+		filepath.Join(app.NotesDir, "inbox.md"),
+		app.Output,
+		app.NotesDir,
+	)
 }
