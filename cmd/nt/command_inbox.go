@@ -23,7 +23,6 @@ func (cmd *InboxCommand) Run(app Application, args []string) error {
 
 	return app.Editor.OpenFile(
 		filepath.Join(app.NotesDir, "inbox.md"),
-		app.Output,
 		app.NotesDir,
 	)
 }

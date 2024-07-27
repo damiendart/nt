@@ -4,12 +4,8 @@
 
 package editor
 
-import (
-	"io"
-)
-
 // Editor is implemented by anything that has a OpenFile method, which
 // is used to open a file in a text editor.
 type Editor interface {
-	OpenFile(name string, w io.Writer, root string) error
+	OpenFile(name string, root string) error
 }

@@ -7,7 +7,6 @@ package editor
 import (
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"runtime"
@@ -18,21 +17,8 @@ import (
 // VimEditor is a representation of the Vim text editor.
 type VimEditor struct{}
 
-// OpenFile opens a file in Vim. If in a Vim terminal, Vim's terminal
-// JSON API will be used to open the file in the current instance of
-// Vim (for more information, see "terminal-api" in Vim's help files).
-func (editor VimEditor) OpenFile(path string, w io.Writer, root string) error {
-	if _, ok := os.LookupEnv("VIM_TERMINAL"); ok {
-		_, err := fmt.Fprintf(
-			w,
-			"\033]51;[%q, %q]\007",
-			"drop",
-			path,
-		)
-
-		return err
-	}
-
+// OpenFile opens a file in Vim.
+func (editor VimEditor) OpenFile(path string, root string) error {
 	// Windows does not support the "execve(2)" system call.
 	if runtime.GOOS == "windows" {
 		if root != "" {

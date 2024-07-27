@@ -86,9 +86,18 @@ func main() {
 		}
 	}
 
+	var e editor.Editor
+
+	_, ok := os.LookupEnv("VIM_TERMINAL")
+	if ok {
+		e = editor.NewVimInVimEditor(os.Stdout)
+	} else {
+		e = &editor.VimEditor{}
+	}
+
 	application := &Application{
 		Commands: cmdMap,
-		Editor:   &editor.VimEditor{},
+		Editor:   e,
 		Logger:   logger,
 		NotesDir: notesDir,
 		Output:   os.Stdout,
