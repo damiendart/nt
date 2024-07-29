@@ -18,11 +18,11 @@ import (
 type VimEditor struct{}
 
 // OpenFile opens a file in Vim.
-func (editor VimEditor) OpenFile(path string, root string) error {
+func (editor VimEditor) OpenFile(path string, cwd string) error {
 	// Windows does not support the "execve(2)" system call.
 	if runtime.GOOS == "windows" {
-		if root != "" {
-			err := os.Chdir(root)
+		if cwd != "" {
+			err := os.Chdir(cwd)
 			if err != nil {
 				return err
 			}
@@ -58,12 +58,12 @@ func (editor VimEditor) OpenFile(path string, root string) error {
 		return err
 	}
 
-	cmd := ""
+	var cmd string
 
-	if root == "" {
+	if cwd == "" {
 		cmd = fmt.Sprintf("vim %s", quotePath(path))
 	} else {
-		cmd = fmt.Sprintf(`vim --cmd 'cd %s' %s`, root, quotePath(path))
+		cmd = fmt.Sprintf(`vim --cmd 'cd %s' %s`, cwd, quotePath(path))
 	}
 
 	return syscall.Exec(shellPath, []string{shellPath, "-c", cmd}, os.Environ())

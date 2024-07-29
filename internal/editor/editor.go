@@ -7,5 +7,5 @@ package editor
 // Editor is implemented by anything that has a OpenFile method, which
 // is used to open a file in a text editor.
 type Editor interface {
-	OpenFile(name string, root string) error
+	OpenFile(path string, cwd string) error
 }
