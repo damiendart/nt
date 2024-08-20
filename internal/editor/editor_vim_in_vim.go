@@ -7,6 +7,7 @@ package editor
 import (
 	"fmt"
 	"io"
+	"path/filepath"
 )
 
 // VimInVimEditor is a representation of the Vim text editor being
@@ -20,10 +21,14 @@ func NewVimInVimEditor(output io.Writer) *VimInVimEditor {
 	return &VimInVimEditor{output: output}
 }
 
-// OpenFile opens a file in current instance of Vim using Vim's terminal
-// JSON API (for more information, search for "terminal-api" in Vim's
-// help files).
-func (e VimInVimEditor) OpenFile(path string, _ string) error {
+// Open implements the editor.Opener interface. Open uses Vim's terminal
+// JSON API to open a file specified at path in the current instance of
+// Vim (for more information, search for "terminal-api" in Vim's help).
+func (e VimInVimEditor) Open(path string, _ string) error {
+	if !filepath.IsAbs(path) {
+		return ErrPathNotAbsolute
+	}
+
 	_, err := fmt.Fprintf(
 		e.output,
 		"\033]51;[%q, %q]\007",

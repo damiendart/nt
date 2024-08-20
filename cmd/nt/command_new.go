@@ -78,5 +78,5 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 		}
 	}
 
-	return app.Editor.OpenFile(file, app.NotesDir)
+	return app.Editor.Open(file, app.NotesDir)
 }

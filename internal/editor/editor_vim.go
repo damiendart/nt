@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"syscall"
@@ -17,8 +18,13 @@ import (
 // VimEditor is a representation of the Vim text editor.
 type VimEditor struct{}
 
-// OpenFile opens a file in Vim.
-func (editor VimEditor) OpenFile(path string, cwd string) error {
+// Open implements the editor.Opener interface. If cwd is provided and
+// not an empty string, the working directory will be updated.
+func (editor VimEditor) Open(path string, cwd string) error {
+	if !filepath.IsAbs(path) {
+		return ErrPathNotAbsolute
+	}
+
 	// Windows does not support the "execve(2)" system call.
 	if runtime.GOOS == "windows" {
 		if cwd != "" {

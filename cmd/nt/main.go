@@ -18,7 +18,7 @@ import (
 // An Application is used to store any application-wide dependencies.
 type Application struct {
 	Commands map[string]Command
-	Editor   editor.Editor
+	Editor   editor.Opener
 	Logger   *log.Logger
 	NotesDir string
 	Output   io.Writer
@@ -86,7 +86,7 @@ func main() {
 		}
 	}
 
-	var e editor.Editor
+	var e editor.Opener
 
 	_, ok := os.LookupEnv("VIM_TERMINAL")
 	if ok {
