@@ -62,7 +62,7 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "- %s: %s\n", time.Now().Format(time.RFC1123), text)
+	_, err = fmt.Fprintf(f, "-   %s: %s\n", time.Now().Format(time.RFC1123), text)
 	if err != nil {
 		return err
 	}
