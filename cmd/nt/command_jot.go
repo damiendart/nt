@@ -15,8 +15,8 @@ import (
 	"github.com/damiendart/nt/internal/cli"
 )
 
-// JotCommand is a nt command that appends a timestamped Markdown list
-// item to the top-level inbox note.
+// JotCommand is a nt command that appends text with a timestamped
+// heading to the top-level inbox note.
 type JotCommand struct{}
 
 // Run will execute the JotCommand command.
@@ -62,7 +62,7 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "-   %s: %s\n", time.Now().Format(time.RFC1123), text)
+	_, err = fmt.Fprintf(f, "\n### %s\n\n%s\n", time.Now().Format(time.RFC1123), text)
 	if err != nil {
 		return err
 	}
