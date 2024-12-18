@@ -7,6 +7,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,25 +31,41 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 
 	if len(args) > 0 {
 		text = strings.Join(args, " ")
-
-		defer func() {
-			fmt.Fprintln(app.Output, text)
-		}()
 	} else {
-		_, err := fmt.Fprint(app.Output, "> ")
-		if err != nil {
-			return err
+		fi, _ := os.Stdin.Stat()
+
+		// Provide a simple prompt if no input has been piped in.
+		if (fi.Mode() & os.ModeCharDevice) != 0 {
+			_, err = fmt.Fprint(app.Output, "> ")
+			if err != nil {
+				return err
+			}
+
+			scanner := bufio.NewScanner(os.Stdin)
+			scanner.Scan()
+
+			err = scanner.Err()
+			if err != nil {
+				return err
+			}
+
+			text = scanner.Text()
+		} else {
+			stdin, err := io.ReadAll(os.Stdin)
+			if err != nil {
+				return err
+			}
+
+			text = string(stdin)
 		}
+	}
 
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
+	text = strings.TrimSuffix(text, "\n")
 
-		err = scanner.Err()
-		if err != nil {
-			return err
-		}
+	if text == "" {
+		app.Logger.Print("jot: skipping empty input")
 
-		text = scanner.Text()
+		return nil
 	}
 
 	f, err := os.OpenFile(
@@ -60,9 +77,12 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 		return err
 	}
 
-	defer f.Close()
-
 	_, err = fmt.Fprintf(f, "\n### %s\n\n%s\n", time.Now().Format(time.RFC1123), text)
+	if err != nil {
+		return err
+	}
+
+	err = f.Close()
 	if err != nil {
 		return err
 	}
