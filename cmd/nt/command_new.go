@@ -45,7 +45,7 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 	}
 
 	if len(remainingArgs) == 0 {
-		return fmt.Errorf("new: missing filename")
+		return fmt.Errorf("missing filename")
 	}
 
 	file := strings.Join(remainingArgs[0:], " ")

@@ -63,7 +63,7 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 	text = strings.TrimSuffix(text, "\n")
 
 	if text == "" {
-		app.Logger.Print("jot: skipping empty input")
+		app.Logger.Print("skipping empty input")
 
 		return nil
 	}

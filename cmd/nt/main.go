@@ -105,11 +105,19 @@ func main() {
 
 	command, ok := application.Commands[remainingArgs[0]]
 	if !ok {
-		application.Logger.Fatalf("invalid command: %q", remainingArgs[0])
+		application.Logger.Fatalf("error: invalid command: %q", remainingArgs[0])
 	}
+
+	application.Logger.SetPrefix(
+		fmt.Sprintf(
+			"%s%s: ",
+			application.Logger.Prefix(),
+			remainingArgs[0],
+		),
+	)
 
 	err = command.Run(*application, remainingArgs[1:])
 	if err != nil {
-		application.Logger.Fatal(err)
+		application.Logger.Fatalf("error: %s", err)
 	}
 }
