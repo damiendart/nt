@@ -24,13 +24,34 @@ type TagsCommand struct{}
 func (cmd *TagsCommand) Run(app Application, args []string) error {
 	var showCount bool
 
-	opts, _, err := cli.ParseArgs(args, cli.Spec{"c": cli.NoValueAccepted})
+	opts, _, err := cli.ParseArgs(
+		args,
+		cli.Spec{
+			"?":    cli.ValueOptional,
+			"c":    cli.NoValueAccepted,
+			"h":    cli.ValueOptional,
+			"help": cli.ValueOptional,
+		},
+	)
 	if err != nil {
 		return err
 	}
 
 	for k := range opts {
 		switch {
+		case k == "?", k == "h", k == "help":
+			help, err := app.Help.Get("jot.txt")
+			if err != nil {
+				return err
+			}
+
+			_, err = app.Output.Write(help)
+			if err != nil {
+				return err
+			}
+
+			os.Exit(0)
+
 		case k == "c":
 			showCount = true
 		}

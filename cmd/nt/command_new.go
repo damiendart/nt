@@ -26,8 +26,11 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 	opts, remainingArgs, err := cli.ParseArgs(
 		args,
 		cli.Spec{
+			"?":           cli.ValueOptional,
 			"create-dirs": cli.NoValueAccepted,
 			"d":           cli.NoValueAccepted,
+			"h":           cli.ValueOptional,
+			"help":        cli.ValueOptional,
 			"z":           cli.NoValueAccepted,
 		},
 	)
@@ -37,6 +40,18 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 
 	for k := range opts {
 		switch {
+		case k == "?", k == "h", k == "help":
+			help, err := app.Help.Get("new.txt")
+			if err != nil {
+				return err
+			}
+
+			_, err = app.Output.Write(help)
+			if err != nil {
+				return err
+			}
+
+			os.Exit(0)
 		case k == "create-dirs", k == "d":
 			createDirs = true
 		case k == "z":

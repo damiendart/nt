@@ -5,6 +5,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"io"
 	"log"
@@ -19,6 +20,7 @@ import (
 type Application struct {
 	Commands map[string]Command
 	Editor   editor.Opener
+	*Help
 	Logger   *log.Logger
 	NotesDir string
 	Output   io.Writer
@@ -30,10 +32,6 @@ type Command interface {
 	Run(app Application, normalisedArgs []string) error
 }
 
-func help(cmdMap map[string]Command) string {
-	return `HELP TEXT GOES HERE`
-}
-
 func main() {
 	var notesDir string
 
@@ -43,6 +41,7 @@ func main() {
 		"new":   &NewCommand{},
 		"tags":  &TagsCommand{},
 	}
+	helpTexts := NewHelp()
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
 
 	globalOptions, remainingArgs, err := cli.ParseArgs(
@@ -62,7 +61,16 @@ func main() {
 	for k, v := range globalOptions {
 		switch {
 		case k == "?", k == "h", k == "help":
-			fmt.Println(help(cmdMap))
+			help, err := helpTexts.Get("main.txt")
+			if err != nil {
+				logger.Fatal(err)
+			}
+
+			_, err = os.Stdout.Write(help)
+			if err != nil {
+				logger.Fatal(err)
+			}
+
 			os.Exit(0)
 
 		case k == "version":
@@ -98,6 +106,7 @@ func main() {
 	application := &Application{
 		Commands: cmdMap,
 		Editor:   e,
+		Help:     helpTexts,
 		Logger:   logger,
 		NotesDir: notesDir,
 		Output:   os.Stdout,

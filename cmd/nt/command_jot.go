@@ -24,9 +24,33 @@ type JotCommand struct{}
 func (cmd JotCommand) Run(app Application, args []string) error {
 	var text string
 
-	_, _, err := cli.ParseArgs(args, cli.Spec{})
+	options, _, err := cli.ParseArgs(
+		args,
+		cli.Spec{
+			"?":    cli.ValueOptional,
+			"h":    cli.ValueOptional,
+			"help": cli.ValueOptional,
+		},
+	)
 	if err != nil {
 		return err
+	}
+
+	for k := range options {
+		switch {
+		case k == "?", k == "h", k == "help":
+			help, err := app.Help.Get("jot.txt")
+			if err != nil {
+				return err
+			}
+
+			_, err = app.Output.Write(help)
+			if err != nil {
+				return err
+			}
+
+			os.Exit(0)
+		}
 	}
 
 	if len(args) > 0 {

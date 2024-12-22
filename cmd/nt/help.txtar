@@ -1,0 +1,14 @@
+// Copyright (C) Damien Dart, <damiendart@pobox.com>.
+// This file is distributed under the MIT licence. For more information,
+// please refer to the accompanying "LICENCE" file.
+
+-- main.txt --
+This is the help text for "nt".
+-- inbox.txt --
+This is the help text for "nt inbox".
+-- jot.txt --
+This is the help text for "nt jot".
+-- new.txt --
+This is the help text for "nt new".
+-- tags.txt --
+This is the help text for "nt tags".
