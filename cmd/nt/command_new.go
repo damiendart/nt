@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/damiendart/nt/internal/cli"
+	"github.com/damiendart/nt/internal/slugify"
 )
 
 // NewCommand is a nt command to open and create notes in a text editor.
@@ -47,20 +48,23 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 		return fmt.Errorf("new: missing filename")
 	}
 
-	file := remainingArgs[0]
-
-	if !strings.HasSuffix(file, ".md") {
-		file = file + ".md"
-	}
+	file := strings.Join(remainingArgs[0:], " ")
+	file = file[0 : len(file)-len(filepath.Ext(file))]
 
 	if zettel {
 		file = fmt.Sprintf(
-			"%s/%s/%s/%s-%s",
+			"%s/%s/%s/%s-%s.md",
 			filepath.Dir(file),
 			time.Now().Format("2006"),
 			time.Now().Format("01"),
 			time.Now().Format("200601021504"),
-			filepath.Base(file),
+			slugify.Slugify(filepath.Base(file)),
+		)
+	} else {
+		file = fmt.Sprintf(
+			"%s/%s.md",
+			filepath.Dir(file),
+			slugify.Slugify(filepath.Base(file)),
 		)
 	}
 
