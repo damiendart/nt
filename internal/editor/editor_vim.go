@@ -66,10 +66,13 @@ func (editor VimEditor) Open(path string, cwd string) error {
 
 	var cmd string
 
+	// Standard input is reopened as "/dev/tty" to prevent Vim from
+	// bombing out if input has been piped in. Currently, any piped
+	// input is not passed through to Vim.
 	if cwd == "" {
-		cmd = fmt.Sprintf("vim %s", quotePath(path))
+		cmd = fmt.Sprintf("vim %s </dev/tty", quotePath(path))
 	} else {
-		cmd = fmt.Sprintf(`vim --cmd 'cd %s' %s`, cwd, quotePath(path))
+		cmd = fmt.Sprintf(`vim --cmd 'cd %s' %s </dev/tty`, cwd, quotePath(path))
 	}
 
 	return syscall.Exec(shellPath, []string{shellPath, "-c", cmd}, os.Environ())
