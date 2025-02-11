@@ -75,14 +75,14 @@ func TestParseArgsWithValidInputs(t *testing.T) {
 		},
 		{
 			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": ValueRequired, "e": ValueRequired, "h": ValueOptional, "j": ValueOptional},
-			[]string{"-abc", "D", "-eFG", "-h=I", "-j", "K"},
-			OptionMap{"a": "", "b": "", "c": "D", "e": "FG", "h": "I", "j": ""},
+			[]string{"-abc", "D", "-eFG", "-h=-I", "-j", "K"},
+			OptionMap{"a": "", "b": "", "c": "D", "e": "FG", "h": "-I", "j": ""},
 			[]string{"K"},
 		},
 		{
 			Spec{"alpha": ValueRequired, "gamma": ValueRequired, "epsilon": NoValueAccepted, "theta": ValueOptional, "kappa": ValueOptional},
-			[]string{"--alpha", "BETA", "--gamma=DELTA", "--epsilon", "--theta=IOTA", "--kappa", "lambda"},
-			OptionMap{"alpha": "BETA", "gamma": "DELTA", "epsilon": "", "theta": "IOTA", "kappa": ""},
+			[]string{"--alpha", "BETA", "--gamma=DELTA", "--epsilon", "--theta=--iota", "--kappa", "lambda"},
+			OptionMap{"alpha": "BETA", "gamma": "DELTA", "epsilon": "", "theta": "--iota", "kappa": ""},
 			[]string{"lambda"},
 		},
 		{
