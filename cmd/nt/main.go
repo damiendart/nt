@@ -55,7 +55,7 @@ func main() {
 		},
 	)
 	if err != nil {
-		logger.Fatalf(err.Error())
+		logger.Fatalf("error: %s", err)
 	}
 
 	for k, v := range globalOptions {
@@ -63,12 +63,12 @@ func main() {
 		case k == "?", k == "h", k == "help":
 			help, err := helpTexts.Get("main.txt")
 			if err != nil {
-				logger.Fatal(err)
+				logger.Fatalf("error: %s", err)
 			}
 
 			_, err = os.Stdout.Write(help)
 			if err != nil {
-				logger.Fatal(err)
+				logger.Fatalf("error: %s", err)
 			}
 
 			os.Exit(0)
@@ -83,14 +83,14 @@ func main() {
 	}
 
 	if len(remainingArgs) == 0 {
-		logger.Fatalf("missing command")
+		logger.Fatalf("error: missing command")
 	}
 
 	if notesDir == "" {
 		if env := os.Getenv("NOTES_ROOT"); env != "" {
 			notesDir = filepath.Clean(env)
 		} else {
-			logger.Fatalf("notes directory not set")
+			logger.Fatalf("error: notes directory not set")
 		}
 	}
 
