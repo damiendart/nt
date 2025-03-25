@@ -75,8 +75,8 @@ func TestParseArgsWithValidInputs(t *testing.T) {
 		},
 		{
 			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": ValueRequired, "e": ValueRequired, "h": ValueOptional, "j": ValueOptional},
-			[]string{"-abc", "D", "-eFG", "-h=-I", "-j", "K"},
-			OptionMap{"a": "", "b": "", "c": "D", "e": "FG", "h": "-I", "j": ""},
+			[]string{"-abcALPHA BETA", "-e=FG", "-h-I", "-j", "K"},
+			OptionMap{"a": "", "b": "", "c": "ALPHA BETA", "e": "FG", "h": "-I", "j": ""},
 			[]string{"K"},
 		},
 		{
@@ -92,16 +92,22 @@ func TestParseArgsWithValidInputs(t *testing.T) {
 			[]string{"g"},
 		},
 		{
-			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": NoValueAccepted},
-			[]string{"-abc", "--", "ALPHA"},
+			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": NoValueAccepted, "delta": ValueRequired},
+			[]string{"-abc", "--", "ALPHA", "--beta"},
 			OptionMap{"a": "", "b": "", "c": ""},
-			[]string{"ALPHA"},
+			[]string{"ALPHA", "--beta"},
 		},
 		{
 			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": ValueRequired, "alpha": ValueOptional},
 			[]string{"-abc", "d", "--alpha", "BETA", "-efg", "--gamma", "g"},
 			OptionMap{"a": "", "b": "", "c": "d", "alpha": ""},
 			[]string{"BETA", "-efg", "--gamma", "g"},
+		},
+		{
+			Spec{"1": NoValueAccepted, "a": ValueRequired},
+			[]string{"-a", "=", "-1"},
+			OptionMap{"1": "", "a": "="},
+			[]string{},
 		},
 	}
 
