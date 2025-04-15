@@ -93,11 +93,11 @@ func ParseArgs(args []string, spec Spec) (OptionMap, []string, error) {
 						if i == len(opts)-1 {
 							currentOption = string(opt)
 						} else {
-							options[string(opt)] = strings.TrimPrefix(opts[i+1:], "=")
+							options[string(opt)] = opts[i+1:]
 							break
 						}
 					} else if t == ValueOptional {
-						options[string(opt)] = strings.TrimPrefix(opts[i+1:], "=")
+						options[string(opt)] = opts[i+1:]
 						break
 					} else {
 						options[string(opt)] = ""
