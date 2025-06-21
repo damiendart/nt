@@ -92,6 +92,12 @@ func TestParseArgsWithValidInputs(t *testing.T) {
 			[]string{"g"},
 		},
 		{
+			Spec{"alpha": ValueRequired, "beta": ValueRequired},
+			[]string{"--alpha=abc def", "--beta", ""},
+			OptionMap{"alpha": "abc def", "beta": ""},
+			[]string{},
+		},
+		{
 			Spec{"a": NoValueAccepted, "b": NoValueAccepted, "c": NoValueAccepted, "delta": ValueRequired},
 			[]string{"-abc", "--", "ALPHA", "--beta"},
 			OptionMap{"a": "", "b": "", "c": ""},
