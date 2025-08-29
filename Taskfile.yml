@@ -19,6 +19,7 @@ tasks:
   ci:
     cmds:
       - task: 'clean'
+      - task: 'dependencies'
       - task: 'lint'
       - task: 'test'
       - task: 'build'
@@ -26,7 +27,7 @@ tasks:
 
   clean:
     cmds:
-      - 'rm -fr nt'
+      - 'rm -fr nt bin'
       - 'go clean -testcache'
     desc: 'Delete all buildable files and caches'
 
@@ -34,6 +35,15 @@ tasks:
     cmds:
       - 'go build ./cmd/nt'
     desc: 'Build the "nt" application'
+
+  dependencies:
+    cmds:
+      - 'mkdir -p {{.USER_WORKING_DIR}}/bin'
+      - 'go install golang.org/x/lint/golint@latest'
+      - 'go install honnef.co/go/tools/cmd/staticcheck@v0.6.1'
+    env:
+      GOBIN: '{{.USER_WORKING_DIR}}/bin'
+    desc: 'Install Go dependencies'
 
   lint:
     cmds:
@@ -44,12 +54,12 @@ tasks:
 
   lint:golint:
     cmds:
-      - 'golint -set_exit_status {{catLines .GO_PACKAGES}}'
+      - 'bin/golint -set_exit_status {{catLines .GO_PACKAGES}}'
     desc: 'Lint Go files with Golint'
 
   lint:staticcheck:
     cmds:
-      - 'staticcheck {{catLines .GO_PACKAGES}}'
+      - 'bin/staticcheck {{catLines .GO_PACKAGES}}'
     desc: 'Lint Go files with Staticcheck'
 
   lint:vet:
