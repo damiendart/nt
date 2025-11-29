@@ -11,6 +11,7 @@ func TestSlugify(t *testing.T) {
 		input    string
 		expected string
 	}{
+		{"a11y.css", "a11y-css"},
 		{"already-a-slug", "already-a-slug"},
 		{"--already--a--slug--", "already-a-slug"},
 		{"apple banana carrot", "apple-banana-carrot"},
