@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/damiendart/nt/internal/cli"
+	"github.com/damiendart/nt/internal/fuzzy"
 	"github.com/damiendart/nt/internal/tags"
 )
 
@@ -23,12 +24,14 @@ type TagsCommand struct{}
 // Run will execute the TagsCommand command.
 func (cmd *TagsCommand) Run(app Application, args []string) error {
 	var showCount bool
+	var useFuzzyFilter bool
 
-	opts, _, err := cli.ParseArgs(
+	opts, remainingArgs, err := cli.ParseArgs(
 		args,
 		cli.Spec{
 			"?":    cli.ValueOptional,
 			"c":    cli.NoValueAccepted,
+			"f":    cli.NoValueAccepted,
 			"h":    cli.ValueOptional,
 			"help": cli.ValueOptional,
 		},
@@ -54,6 +57,9 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 
 		case k == "c":
 			showCount = true
+
+		case k == "f":
+			useFuzzyFilter = true
 		}
 	}
 
@@ -77,7 +83,15 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 				for scanner.Scan() {
 					matches := tags.ExtractHashtags(scanner.Text())
 					for _, t := range matches {
-						tagsCount[t]++
+						if len(remainingArgs) > 0 {
+							if useFuzzyFilter && fuzzy.IsFuzzyMatch(remainingArgs[0], t) {
+								tagsCount[t]++
+							} else if strings.HasPrefix(t, remainingArgs[0]) {
+								tagsCount[t]++
+							}
+						} else {
+							tagsCount[t]++
+						}
 					}
 				}
 
@@ -103,7 +117,11 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 	}
 	slices.Sort(ts)
 
-	_, err = fmt.Fprintln(app.Output, strings.Join(ts, "\n"))
+	if len(tagsCount) > 0 {
+		_, err = fmt.Fprintln(app.Output, strings.Join(ts, "\n"))
 
-	return err
+		return err
+	}
+
+	return nil
 }
