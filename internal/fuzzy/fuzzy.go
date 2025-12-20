@@ -7,27 +7,34 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// IsFuzzyMatch reports whether the characters in the given needle
-// string occur in the same order as the given haystack string. Ahead of
-// the comparison, both needle and haystack strings are converted to
-// lowercase and character accents are removed.
-func IsFuzzyMatch(needle string, haystack string) bool {
-	haystack = normalise(haystack)
-	needle = normalise(needle)
+// MatchScore returns the length of the shortest prefix of s that
+// contains all characters of needle in order, but not necessarily
+// sequentially. If no such prefix exists, MatchScore returns -1.
+// When comparing match scores, lower positive values are better.
+//
+// Ahead of the comparison, both needle and s are converted to lowercase
+// and any diacritical marks are removed.
+func MatchScore(s string, needle string) int {
+	var p int
 
-	p := 0
+	needle = normalise(needle)
+	s = normalise(s)
+
+	if len(needle) == 0 || len(needle) > len(s) {
+		return -1
+	}
 
 	for _, r := range needle {
-		i := strings.IndexRune(haystack[p:], r)
+		i := strings.IndexRune(s[p:], r)
 
 		if i == -1 {
-			return false
+			return -1
 		}
 
 		p += i + 1
 	}
 
-	return true
+	return p
 }
 
 func normalise(s string) string {

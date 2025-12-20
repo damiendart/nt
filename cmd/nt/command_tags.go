@@ -6,8 +6,10 @@ package main
 
 import (
 	"bufio"
+	"cmp"
 	"fmt"
 	"io/fs"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -21,10 +23,16 @@ import (
 // TagsCommand is a nt command to list all tags used across all notes.
 type TagsCommand struct{}
 
+type match struct {
+	count int
+	score int
+	tag   string
+}
+
 // Run will execute the TagsCommand command.
 func (cmd *TagsCommand) Run(app Application, args []string) error {
 	var showCount bool
-	var useFuzzyFilter bool
+	var useFuzzyMatching bool
 
 	opts, remainingArgs, err := cli.ParseArgs(
 		args,
@@ -59,11 +67,11 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 			showCount = true
 
 		case k == "f":
-			useFuzzyFilter = true
+			useFuzzyMatching = true
 		}
 	}
 
-	tagsCount := make(map[string]int)
+	matches := make(map[string]match)
 
 	err = filepath.WalkDir(
 		app.NotesDir,
@@ -81,16 +89,25 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 
 				scanner := bufio.NewScanner(f)
 				for scanner.Scan() {
-					matches := tags.ExtractHashtags(scanner.Text())
-					for _, t := range matches {
+					tags := tags.ExtractHashtags(scanner.Text())
+					for _, tag := range tags {
+						if m, ok := matches[tag]; ok {
+							m.count++
+							matches[tag] = m
+
+							continue
+						}
+
 						if len(remainingArgs) > 0 {
-							if useFuzzyFilter && fuzzy.IsFuzzyMatch(remainingArgs[0], t) {
-								tagsCount[t]++
-							} else if strings.HasPrefix(t, remainingArgs[0]) {
-								tagsCount[t]++
+							if useFuzzyMatching {
+								if s := fuzzy.MatchScore(tag, remainingArgs[0]); s != -1 {
+									matches[tag] = match{1, s, tag}
+								}
+							} else if strings.HasPrefix(tag, remainingArgs[0]) {
+								matches[tag] = match{1, 0, tag}
 							}
 						} else {
-							tagsCount[t]++
+							matches[tag] = match{1, 0, tag}
 						}
 					}
 				}
@@ -107,20 +124,32 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 		return err
 	}
 
-	ts := make([]string, 0, len(tagsCount))
-	for k, v := range tagsCount {
-		if showCount {
-			ts = append(ts, fmt.Sprintf("%s (%d)", k, v))
-		} else {
-			ts = append(ts, k)
+	ms := slices.Collect(maps.Values(matches))
+
+	slices.SortFunc(
+		ms,
+		func(a, b match) int {
+			if n := cmp.Compare(a.score, b.score); n != 0 {
+				return n
+			}
+			return strings.Compare(a.tag, b.tag)
+		},
+	)
+
+	if len(ms) > 0 {
+		for _, m := range ms {
+			if showCount {
+				_, err := fmt.Fprintf(app.Output, "%s (%d)\n", m.tag, m.count)
+				if err != nil {
+					return err
+				}
+			} else {
+				_, err := fmt.Fprintf(app.Output, "%s\n", m.tag)
+				if err != nil {
+					return err
+				}
+			}
 		}
-	}
-	slices.Sort(ts)
-
-	if len(tagsCount) > 0 {
-		_, err = fmt.Fprintln(app.Output, strings.Join(ts, "\n"))
-
-		return err
 	}
 
 	return nil
