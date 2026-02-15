@@ -23,7 +23,7 @@ import (
 func ExtractHashtags(s string) []string {
 	var matches []string
 
-	for _, t := range strings.Fields(s) {
+	for t := range strings.FieldsSeq(s) {
 		t = strings.Trim(t, "\"'()")
 
 		if len(t) == 1 {
