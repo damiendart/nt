@@ -15,6 +15,7 @@ func TestSlugify(t *testing.T) {
 		{"already-a-slug", "already-a-slug"},
 		{"--already--a--slug--", "already-a-slug"},
 		{"apple banana carrot", "apple-banana-carrot"},
+		{"  apple banana carrot\t", "apple-banana-carrot"},
 		{"don't eat Brian’s \"cake\", please!", "dont-eat-brians-cake-please"},
 		{"Crème Caramel with Äpfel", "crème-caramel-with-äpfel"},
 	}
