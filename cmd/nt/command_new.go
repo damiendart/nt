@@ -5,6 +5,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -83,19 +84,30 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 		)
 	}
 
-	file = filepath.Join(app.NotesDir, file)
 	file = filepath.Clean(file)
 
-	if !strings.HasPrefix(file, app.NotesDir) {
-		return fmt.Errorf("note would be created outside of %q", app.NotesDir)
-	}
-
 	if createDirs {
-		err := os.MkdirAll(filepath.Dir(file), 0700)
+		err := app.NotesRoot.MkdirAll(filepath.Dir(file), 0700)
 		if err != nil {
+			if pathError, ok := errors.AsType[*os.PathError](err); ok {
+				// See <https://github.com/golang/go/issues/74640>.
+				if strings.Contains(pathError.Error(), "path escapes from parent") {
+					return fmt.Errorf("note would be created outside of %q", app.NotesRoot.Name())
+				}
+
+				return err
+			}
+
 			return err
+		}
+	} else {
+		if !strings.HasPrefix(filepath.Join(app.NotesRoot.Name(), file), app.NotesRoot.Name()) {
+			return fmt.Errorf("note would be created outside of %q", app.NotesRoot.Name())
 		}
 	}
 
-	return app.Editor.Open(file, app.NotesDir)
+	return app.Editor.Open(
+		filepath.Join(app.NotesRoot.Name(), file),
+		app.NotesRoot.Name(),
+	)
 }

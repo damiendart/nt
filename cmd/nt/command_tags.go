@@ -73,15 +73,16 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 
 	matches := make(map[string]match)
 
-	err = filepath.WalkDir(
-		app.NotesDir,
+	err = fs.WalkDir(
+		app.NotesRoot.FS(),
+		".",
 		func(s string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
 
 			if filepath.Ext(s) == ".md" {
-				f, err := os.Open(s)
+				f, err := app.NotesRoot.Open(s)
 				if err != nil {
 					return err
 				}

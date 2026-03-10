@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -92,8 +91,8 @@ func (cmd JotCommand) Run(app Application, args []string) error {
 		return nil
 	}
 
-	f, err := os.OpenFile(
-		filepath.Join(app.NotesDir, "inbox.md"),
+	f, err := app.NotesRoot.OpenFile(
+		"inbox.md",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
 		0600,
 	)

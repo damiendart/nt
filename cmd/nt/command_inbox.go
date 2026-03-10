@@ -47,7 +47,7 @@ func (cmd *InboxCommand) Run(app Application, args []string) error {
 	}
 
 	return app.Editor.Open(
-		filepath.Join(app.NotesDir, "inbox.md"),
-		app.NotesDir,
+		filepath.Join(app.NotesRoot.Name(), "inbox.md"),
+		app.NotesRoot.Name(),
 	)
 }

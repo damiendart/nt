@@ -21,9 +21,9 @@ type Application struct {
 	Commands map[string]Command
 	Editor   editor.Opener
 	*Help
-	Logger   *log.Logger
-	NotesDir string
-	Output   io.Writer
+	Logger    *log.Logger
+	NotesRoot *os.Root
+	Output    io.Writer
 }
 
 // Command is implemented by anything that has a Run method. The
@@ -87,12 +87,21 @@ func main() {
 	}
 
 	if notesDir == "" {
-		if env := os.Getenv("NOTES_ROOT"); env != "" {
-			notesDir = filepath.Clean(env)
-		} else {
+		if notesDir = os.Getenv("NOTES_ROOT"); notesDir == "" {
 			logger.Fatalf("error: notes directory not set")
 		}
 	}
+
+	notesDir, err = filepath.Abs(notesDir)
+	if err != nil {
+		logger.Fatalf("error: %s", err)
+	}
+
+	r, err := os.OpenRoot(notesDir)
+	if err != nil {
+		logger.Fatalf("error: %s", err)
+	}
+	defer r.Close()
 
 	var e editor.Opener
 
@@ -104,12 +113,12 @@ func main() {
 	}
 
 	application := &Application{
-		Commands: cmdMap,
-		Editor:   e,
-		Help:     helpTexts,
-		Logger:   logger,
-		NotesDir: notesDir,
-		Output:   os.Stdout,
+		Commands:  cmdMap,
+		Editor:    e,
+		Help:      helpTexts,
+		Logger:    logger,
+		NotesRoot: r,
+		Output:    os.Stdout,
 	}
 
 	command, ok := application.Commands[remainingArgs[0]]
