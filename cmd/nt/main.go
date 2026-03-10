@@ -104,9 +104,7 @@ func main() {
 	defer r.Close()
 
 	var e editor.Opener
-
-	_, ok := os.LookupEnv("VIM_TERMINAL")
-	if ok {
+	if _, ok := os.LookupEnv("VIM_TERMINAL"); ok {
 		e = editor.NewVimInVimEditor(os.Stdout)
 	} else {
 		e = &editor.VimEditor{}
