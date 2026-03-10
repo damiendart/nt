@@ -65,7 +65,10 @@ func (cmd *NewCommand) Run(app Application, args []string) error {
 	}
 
 	file := strings.Join(remainingArgs[0:], " ")
-	file = file[0 : len(file)-len(filepath.Ext(file))]
+
+	if filepath.Ext(file) == ".md" {
+		file = file[0 : len(file)-len(filepath.Ext(file))]
+	}
 
 	if zettel {
 		file = fmt.Sprintf(
