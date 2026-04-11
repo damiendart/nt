@@ -36,10 +36,11 @@ func main() {
 	var notesDir string
 
 	cmdMap := map[string]Command{
-		"inbox": &InboxCommand{},
-		"jot":   &JotCommand{},
-		"new":   &NewCommand{},
-		"tags":  &TagsCommand{},
+		"backlinks": &BacklinksCommand{},
+		"inbox":     &InboxCommand{},
+		"jot":       &JotCommand{},
+		"new":       &NewCommand{},
+		"tags":      &TagsCommand{},
 	}
 	helpTexts := NewHelp()
 	logger := log.New(os.Stderr, os.Args[0]+": ", 0)
