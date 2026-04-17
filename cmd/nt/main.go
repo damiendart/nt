@@ -6,6 +6,7 @@ package main
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -135,6 +136,15 @@ func main() {
 
 	err = command.Run(*application, remainingArgs[1:])
 	if err != nil {
+		if nfe, ok := errors.AsType[NoResultsError](err); ok {
+			// Displaying a "no results" message feels a little
+			// redundant, so just use the error's return code.
+			os.Exit(nfe.ReturnCode())
+		} else if rc, ok := errors.AsType[ReturnCoder](err); ok {
+			application.Logger.Printf("error: %s", rc)
+			os.Exit(rc.ReturnCode())
+		}
+
 		application.Logger.Fatalf("error: %s", err)
 	}
 }

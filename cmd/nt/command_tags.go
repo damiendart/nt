@@ -127,6 +127,10 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 
 	ms := slices.Collect(maps.Values(matches))
 
+	if len(ms) == 0 {
+		return NoResultsError("no tags found")
+	}
+
 	slices.SortFunc(
 		ms,
 		func(a, b match) int {
@@ -137,18 +141,16 @@ func (cmd *TagsCommand) Run(app Application, args []string) error {
 		},
 	)
 
-	if len(ms) > 0 {
-		for _, m := range ms {
-			if showCount {
-				_, err := fmt.Fprintf(app.Output, "%s (%d)\n", m.tag, m.count)
-				if err != nil {
-					return err
-				}
-			} else {
-				_, err := fmt.Fprintf(app.Output, "%s\n", m.tag)
-				if err != nil {
-					return err
-				}
+	for _, m := range ms {
+		if showCount {
+			_, err := fmt.Fprintf(app.Output, "%s (%d)\n", m.tag, m.count)
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err := fmt.Fprintf(app.Output, "%s\n", m.tag)
+			if err != nil {
+				return err
 			}
 		}
 	}

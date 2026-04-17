@@ -54,6 +54,7 @@ func (cmd *BacklinksCommand) Run(app Application, args []string) error {
 	}
 
 	base := strings.Join(remainingArgs[0:], " ")
+	backlinksFound := false
 
 	if filepath.Ext(base) == ".md" {
 		base = base[0 : len(base)-len(filepath.Ext(base))]
@@ -95,6 +96,7 @@ func (cmd *BacklinksCommand) Run(app Application, args []string) error {
 
 					for _, candidate := range candidates {
 						if i := strings.Index(scanner.Text(), candidate); i != -1 {
+							backlinksFound = true
 							_, err := fmt.Fprintf(app.Output, "%s:%d:%d:%s\n", s, line, i+3, scanner.Text())
 							if err != nil {
 								return err
@@ -113,6 +115,10 @@ func (cmd *BacklinksCommand) Run(app Application, args []string) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	if !backlinksFound {
+		return NoResultsError("no backlinks found")
 	}
 
 	return nil
