@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 
 	"github.com/damiendart/nt/internal/cli"
 	"github.com/damiendart/nt/internal/editor"
@@ -76,7 +77,15 @@ func main() {
 			os.Exit(0)
 
 		case k == "version":
-			fmt.Println("VERSION GOES HERE")
+			buildInfo, ok := debug.ReadBuildInfo()
+			if !ok {
+				fmt.Println("unknown")
+			} else if buildInfo.Main.Version != "" {
+				fmt.Println(buildInfo.Main.Version)
+			} else {
+				fmt.Println("unknown")
+			}
+
 			os.Exit(0)
 
 		case k == "notes-dir":
