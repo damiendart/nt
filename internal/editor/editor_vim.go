@@ -42,9 +42,8 @@ func (editor VimEditor) Open(path string, cwd string) error {
 
 		err := cmd.Run()
 		if err != nil {
-			var exitError *exec.ExitError
 
-			if errors.As(err, &exitError) {
+			if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 				return fmt.Errorf("vim exited with exit status %d", exitError.ExitCode())
 			}
 
