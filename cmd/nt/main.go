@@ -42,6 +42,7 @@ func main() {
 		"inbox":     &InboxCommand{},
 		"jot":       &JotCommand{},
 		"new":       &NewCommand{},
+		"serve":     &ServeCommand{},
 		"tags":      &TagsCommand{},
 	}
 	helpTexts := NewHelp()

@@ -12,5 +12,7 @@ This is the help text for "nt inbox".
 This is the help text for "nt jot".
 -- new.txt --
 This is the help text for "nt new".
+-- serve.txt --
+This is the help text for "nt serve".
 -- tags.txt --
 This is the help text for "nt tags".

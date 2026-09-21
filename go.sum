@@ -1,3 +1,9 @@
+github.com/yuin/goldmark-meta/v2 v2.0.2 h1:9AYQ2yFOMvOdVNqm4xjXS0ChkDDAngNR0xjTZWbprI0=
+github.com/yuin/goldmark-meta/v2 v2.0.2/go.mod h1:pU10yCPmb8VP+PJ5s174COVs4tt1fp9SBbpHM2smg5Y=
+github.com/yuin/goldmark/v2 v2.1.5 h1:ij6SZY7VRLXVPRDHEK71Beo3gHaN1gAPdOL+CKgsCdc=
+github.com/yuin/goldmark/v2 v2.1.5/go.mod h1:G6M4/qOFtfn01/o14BU1UR2Lo5N3S9Qo7xCuz/sHjGQ=
+go.yaml.in/yaml/v4 v4.0.0-rc.6 h1:1h7H1ohdUh93/FyE4YaDa1Zh64K6VVbjF4K6WUxMtH4=
+go.yaml.in/yaml/v4 v4.0.0-rc.6/go.mod h1:aZqd9kCMsGL7AuUv/m/PvWLdg5sjJsZ4oHDEnfPPfY0=
 golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
 golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
 golang.org/x/tools v0.50.0 h1:c2ifzfcuY7L90lZ2aKd8S4K2NpASF08SZx9ZuJkHmSU=
